@@ -14,13 +14,13 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   Client? httpClient;
-  Web3Client? ethClient;
+  Web3Client? maticClient;
   TextEditingController controller = TextEditingController();
 
   @override
   void initState() {
     httpClient = Client();
-    ethClient = Web3Client(alchemy_url, httpClient!);
+    maticClient = Web3Client(alchemy_url, httpClient!);
     super.initState();
   }
 
@@ -49,12 +49,12 @@ class _HomeState extends State<Home> {
                 child: ElevatedButton(
                     onPressed: () async {
                       if (controller.text.length > 0) {
-                        await startElection(controller.text, ethClient!);
+                        await startElection(controller.text, maticClient!);
                         Navigator.push(
                             context,
                             MaterialPageRoute(
                                 builder: ((context) => ElectionInfo(
-                                    ethClient: ethClient!,
+                                    ethClient: maticClient!,
                                     electionName: controller.text))));
                       }
                     },

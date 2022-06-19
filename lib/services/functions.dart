@@ -14,11 +14,12 @@ Future<DeployedContract> loadcontract() async {
 
 //hyper func
 Future<String> callFunction(String funcname, List<dynamic> args,
-    Web3Client ethClient, String PrivateKey) async {
+    Web3Client maticClient, String PrivateKey) async {
   EthPrivateKey credential = EthPrivateKey.fromHex(PrivateKey);
+
   DeployedContract contract = await loadcontract();
   final ethfunction = contract.function(funcname);
-  final result = await ethClient.sendTransaction(
+  final result = await maticClient.sendTransaction(
     credential,
     Transaction.callContract(
         contract: contract, function: ethfunction, parameters: args),
@@ -30,60 +31,60 @@ Future<String> callFunction(String funcname, List<dynamic> args,
 }
 
 //funx to start election
-Future<String> startElection(String name, Web3Client ethClient) async {
-  var response =
-      await callFunction('startElection', [name], ethClient, owner_private_key);
+Future<String> startElection(String name, Web3Client maticClient) async {
+  var response = await callFunction(
+      'startElection', [name], maticClient, owner_private_key);
   print('Election Started Successfully');
   return response;
 }
 
 // function to add a candidate
-Future<String> addCandidate(String name, Web3Client ethClient) async {
-  var response =
-      await callFunction('addCandidate', [name], ethClient, owner_private_key);
+Future<String> addCandidate(String name, Web3Client maticClient) async {
+  var response = await callFunction(
+      'addCandidate', [name], maticClient, owner_private_key);
   print('Candidate added Successfully');
   return response;
 }
 
 //function to authorize A voter
-Future<String> authorizeVoter(String address, Web3Client ethClient) async {
+Future<String> authorizeVoter(String address, Web3Client maticClient) async {
   var response = await callFunction('authorizeVoter',
-      [EthereumAddress.fromHex(address)], ethClient, owner_private_key);
+      [EthereumAddress.fromHex(address)], maticClient, owner_private_key);
   print('Voter Authorized Successfully');
   return response;
 }
 
 // function to call the function below
-Future<List> getCandidatesNum(Web3Client ethClient) async {
-  List<dynamic> result = await ask('getNumCandidates', [], ethClient);
+Future<List> getCandidatesNum(Web3Client maticClient) async {
+  List<dynamic> result = await ask('getNumCandidates', [], maticClient);
   return result;
 }
 
-Future<List> getTotalVotes(Web3Client ethClient) async {
-  List<dynamic> result = await ask('getTotalVotes', [], ethClient);
+Future<List> getTotalVotes(Web3Client maticClient) async {
+  List<dynamic> result = await ask('getTotalVotes', [], maticClient);
   return result;
 }
 
-Future<List> candidateInfo(int index, Web3Client ethClient) async {
+Future<List> candidateInfo(int index, Web3Client maticClient) async {
   List<dynamic> result =
-      await ask('candidateInfo', [BigInt.from(index)], ethClient);
+      await ask('candidateInfo', [BigInt.from(index)], maticClient);
   return result;
 }
 
 //function for getting the number of candidates
 Future<List<dynamic>> ask(
-    String funcName, List<dynamic> args, Web3Client ethClient) async {
+    String funcName, List<dynamic> args, Web3Client maticClient) async {
   final contract = await loadcontract();
   final ethFunction = contract.function(funcName);
   final result =
-      ethClient.call(contract: contract, function: ethFunction, params: args);
+      maticClient.call(contract: contract, function: ethFunction, params: args);
   return result;
 }
 
 //function for voting
-Future<String> vote(int candidateIndex, Web3Client ethClient) async {
+Future<String> vote(int candidateIndex, Web3Client maticClient) async {
   var response = await callFunction(
-      'vote', [BigInt.from(candidateIndex)], ethClient, voter_private_key);
+      'vote', [BigInt.from(candidateIndex)], maticClient, voter_private_key);
   print('Vote counted Successfully');
   return response;
 }
